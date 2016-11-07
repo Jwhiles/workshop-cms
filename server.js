@@ -3,10 +3,10 @@ var fs = require('fs')
 var message = 'I am complacent about being in a girl group';
 var nodeMessage = 'I am a little node, I have a little toad';
 var girlsMessage = 'teapot teapot teapot teapot teapoteteapot teapot teapot teapot teapoteteapot teapot teapot teapot teapoteteapot teapot teapot teapot teapoteteapot teapot teapot teapot teapoteteapot teapot teapot teapot teapoteteapot teapot teapot teapot teapoteteapot teapot teapot teapot teapoteteapot teapot teapot teapot teapoteteapot teapot teapot teapot teapote'
-
-
+var path = require('path');
 function handler(request, response){
   var endpoint = request.url;
+  var extension = path.extname(endpoint).substring(1);
   console.log(endpoint);
   if (endpoint === '/') {
     response.writeHead(200, {"content-type": "text/html"});
@@ -25,9 +25,14 @@ function handler(request, response){
     response.writeHead(200, { "content-type": "text/html" });
     response.end(girlsMessage);
   } else {
-    response.writeHead(200, {"content-type":"text/html"});
-    response.write(message);
-    response.end();
+    response.writeHead(200, {"content-type":"text/" + extension});
+    fs.readFile(__dirname + '/public'+endpoint, function(err,file){
+      if (err) {
+        console.log(err);
+        return;
+      }
+      response.end(file);
+    })
   }
 };
 
